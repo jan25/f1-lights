@@ -12,10 +12,10 @@
       <div id="connector"></div>
       <Light ref="lights" v-for="id in [0, 1, 2, 3, 4]" :key="id" />
     </div>
-    <h1 class="display-2">
+    <h1 class="time">
       {{ this.result !== null ? this.result : "" }}
     </h1>
-    <div>Best time: {{ this.best }}</div>
+    <div>Your best: {{ this.best }}</div>
   </div>
 </template>
 
@@ -39,13 +39,8 @@ export default {
       result: "00.000",
       startTime: null,
       timerId: null,
+      best: localStorage.best || 0,
     };
-  },
-
-  computed: {
-    best: function() {
-      return this.format(localStorage.best || 0);
-    },
   },
 
   methods: {
@@ -64,6 +59,7 @@ export default {
     },
 
     turnOnNextLight() {
+      // TODO introduce variable time for lights off
       if (this.nextLight == 5) {
         this.clearLights();
         this.startTime = Date.now();
@@ -82,7 +78,7 @@ export default {
     onClick() {
       if (this.state == RUNNING) {
         this.state = IDLE;
-        this.result = "JUMP START!!";
+        this.result = "JUMP START!";
         clearInterval(this.timerId);
         return;
       } else if (this.state == IDLE) {
@@ -91,13 +87,8 @@ export default {
       } else if (this.state == WAITING) {
         this.state = IDLE;
         this.result = this.format(Date.now() - this.startTime);
-        localStorage.best = Math.min(
-          this.best == 0 ? 10 : this.best,
-          this.result
-        );
-      } else {
-        this.state = IDLE;
-        this.result = "JUMP START!";
+        this.best = Math.min(this.best == 0 ? 10 : this.best, this.result);
+        localStorage.best = this.best;
       }
     },
 
@@ -136,9 +127,25 @@ export default {
 }
 
 @media only screen and (max-width: 600px) {
-  .info {
-    padding: 10px;
+  .help {
+    width: 90%;
     text-align: center;
+  }
+
+  /* Copied from display-4 of bootstrap */
+  .time {
+    font-size: 3.5rem;
+    font-weight: 300;
+    line-height: 1.2;
+  }
+}
+
+@media only screen and (min-width: 600px) {
+  /* Copied from display-2 of bootstrap */
+  .time {
+    font-size: 5.5rem;
+    font-weight: 300;
+    line-height: 1.2;
   }
 }
 </style>
