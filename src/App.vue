@@ -27,7 +27,7 @@ const IDLE = "idle";
 const RUNNING = "running";
 const WAITING = "waiting";
 
-const SWITCH_INTERVAL = 1000; // ms
+const LIGHT_ON_INTERVAL = 1000; // ms
 
 export default {
   components: { LightStrip },
@@ -51,20 +51,30 @@ export default {
       this.clearLights();
 
       this.turnOnNextLight();
-      this.timerId = setInterval(() => this.turnOnNextLight(), SWITCH_INTERVAL);
+      this.timerId = setInterval(
+        () => this.turnOnNextLight(),
+        LIGHT_ON_INTERVAL
+      );
     },
 
     turnOnNextLight() {
-      // TODO introduce variable time for lights off
       if (this.nextLightStrip == 5) {
-        this.clearLights();
-        this.startTime = Date.now();
-        this.state = WAITING;
+        this.fuzzedLightsOut();
         clearInterval(this.timerId);
       } else {
         this.$refs.lights[this.nextLightStrip].switchOn(true);
         this.nextLightStrip++;
       }
+    },
+
+    fuzzedLightsOut() {
+      // random time between 1.5sec and 5sec
+      const fuzzyInterval = Math.random() * 3500 + 1500;
+      setTimeout(() => {
+        this.clearLights();
+        this.startTime = Date.now();
+        this.state = WAITING;
+      }, fuzzyInterval);
     },
 
     clearLights() {
