@@ -39,7 +39,8 @@ export default {
       result: "00.000",
       startTime: null,
       timerId: null,
-      best: localStorage.best || 0,
+      fuzzerId: null,
+      best: localStorage.best || 0
     };
   },
 
@@ -70,7 +71,7 @@ export default {
     fuzzedLightsOut() {
       // random time between 1.5sec and 5sec
       const fuzzyInterval = Math.random() * 3500 + 1500;
-      setTimeout(() => {
+      this.fuzzerId = setTimeout(() => {
         this.clearLights();
         this.startTime = Date.now();
         this.state = WAITING;
@@ -78,7 +79,7 @@ export default {
     },
 
     clearLights() {
-      this.$refs.lights.forEach((l) => l.switchOn(false));
+      this.$refs.lights.forEach(l => l.switchOn(false));
     },
 
     onClick() {
@@ -86,6 +87,7 @@ export default {
         this.state = IDLE;
         this.result = "JUMP START!";
         clearInterval(this.timerId);
+        clearTimeout(this.fuzzerId);
       } else if (this.state == IDLE) {
         this.state = RUNNING;
         this.start();
@@ -102,8 +104,8 @@ export default {
       // Convert milliseconds to seconds.milliseconds format
       const secs = (ms / 1000).toFixed(3);
       return `${(parseInt(secs) < 10 ? "0" : "") + secs}`;
-    },
-  },
+    }
+  }
 };
 </script>
 
