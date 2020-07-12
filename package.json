@@ -2,7 +2,6 @@
   "name": "f1-lights",
   "version": "0.1.0",
   "private": true,
-  "homepage": "http://jan25.github.io/f1-lights",
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",

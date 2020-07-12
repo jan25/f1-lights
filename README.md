@@ -1,4 +1,4 @@
-# F1 lights | Reaction time
+# F1 Lights | Reaction time
 
 Measure your reaction skills with this simple web application. Visit
 [f1-lights](http://jan25.github.io/f1-lights) to try it.
