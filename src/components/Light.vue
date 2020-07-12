@@ -36,14 +36,14 @@ export default {
     width: 100px;
     padding: 0 10px;
     border-radius: 15px;
-    background-color: black;
+    background: black;
     margin: 0 5px;
   }
 
   .light {
     padding-top: 100%;
     border-radius: 50%;
-    background-color: #8080805c;
+    background: #8080805c;
     margin-bottom: 10px;
     margin-top: 10px;
   }

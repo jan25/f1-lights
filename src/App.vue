@@ -15,13 +15,12 @@
     <h1 class="time">
       {{ this.result !== null ? this.result : "" }}
     </h1>
-    <div>Your best: {{ this.best }}</div>
+    <div>Your best: {{ this.format(this.best) }}</div>
   </div>
 </template>
 
 <script>
 import Light from "./components/Light.vue";
-import _ from "lodash";
 
 const IDLE = "idle";
 const RUNNING = "running";
@@ -72,7 +71,7 @@ export default {
     },
 
     clearLights() {
-      _.forEach(this.$refs.lights, (l) => l.switchOn(false));
+      this.$refs.lights.forEach((l) => l.switchOn(false));
     },
 
     onClick() {
@@ -86,13 +85,15 @@ export default {
         this.start();
       } else if (this.state == WAITING) {
         this.state = IDLE;
-        this.result = this.format(Date.now() - this.startTime);
-        this.best = Math.min(this.best == 0 ? 10 : this.best, this.result);
+        const timeDiff = Date.now() - this.startTime;
+        this.result = this.format(timeDiff);
+        this.best = Math.min(this.best === 0 ? 1000000 : this.best, timeDiff);
         localStorage.best = this.best;
       }
     },
 
     format(ms) {
+      console.log(ms);
       const secs = (ms / 1000).toFixed(3);
       return `${(parseInt(secs) < 10 ? "0" : "") + secs}`;
     },
