@@ -1,5 +1,5 @@
 <template>
-  <div id="light-container">
+  <div class="light-container">
     <div
       v-for="light in lights"
       :key="light.id"
@@ -31,21 +31,47 @@ export default {
 </script>
 
 <style scoped>
-#light-container {
-  width: 70px;
-  height: 350px;
-  padding: 10px;
-  border-radius: 15px;
-  background-color: black;
+@media only screen and (min-width: 600px) {
+  .light-container {
+    width: 100px;
+    padding: 0 10px;
+    border-radius: 15px;
+    background-color: black;
+    margin: 0 5px;
+  }
+
+  .light {
+    padding-top: 100%;
+    border-radius: 50%;
+    background-color: #8080805c;
+    margin-bottom: 10px;
+    margin-top: 10px;
+  }
+
+  .light.on {
+    background-color: #ff1801;
+  }
 }
 
-.light {
-  padding-top: 100%;
-  border-radius: 50%;
-  background-color: grey;
-}
+@media only screen and (max-width: 600px) {
+  .light-container {
+    width: 60px;
+    padding: 0 5px;
+    border-radius: 8px;
+    background-color: black;
+    margin: 0 3px;
+  }
 
-.light.on {
-  background-color: red;
+  .light {
+    padding-top: 100%;
+    border-radius: 50%;
+    background-color: #8080805c;
+    margin-bottom: 5px;
+    margin-top: 5px;
+  }
+
+  .light.on {
+    background-color: #ff1801;
+  }
 }
 </style>

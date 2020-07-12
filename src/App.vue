@@ -1,12 +1,21 @@
 <template>
   <div id="app" v-on:click="this.onClick">
+    <div class="help">
+      <p>
+        <em
+          >Click or tap anywhere on the screen to start. Click again when lights
+          go off.</em
+        >
+      </p>
+    </div>
     <div id="container" ref="app">
+      <div id="connector"></div>
       <Light ref="lights" v-for="id in [0, 1, 2, 3, 4]" :key="id" />
     </div>
-    <div id="connector"></div>
-    <div>
+    <h1 class="display-2">
       {{ this.result !== null ? this.result : "" }}
-    </div>
+    </h1>
+    <div>Best time: {{ this.best }}</div>
   </div>
 </template>
 
@@ -27,9 +36,16 @@ export default {
     return {
       state: IDLE,
       nextLight: 0,
-      result: null,
+      result: "00.000",
       startTime: null,
+      timerId: null,
     };
+  },
+
+  computed: {
+    best: function() {
+      return this.format(localStorage.best || 0);
+    },
   },
 
   methods: {
@@ -39,20 +55,20 @@ export default {
       }
 
       this.nextLight = 0;
-      this.result = null;
+      this.result = "00.000";
       this.startTime = null;
       this.clearLights();
 
       this.turnOnNextLight();
-      const id = setInterval(() => this.turnOnNextLight(id), SWITCH_INTERVAL);
+      this.timerId = setInterval(() => this.turnOnNextLight(), SWITCH_INTERVAL);
     },
 
-    turnOnNextLight(id) {
+    turnOnNextLight() {
       if (this.nextLight == 5) {
         this.clearLights();
         this.startTime = Date.now();
         this.state = WAITING;
-        clearInterval(id);
+        clearInterval(this.timerId);
       } else {
         this.$refs.lights[this.nextLight].switchOn(true);
         this.nextLight++;
@@ -64,19 +80,30 @@ export default {
     },
 
     onClick() {
-      console.log("single click");
       if (this.state == RUNNING) {
+        this.state = IDLE;
+        this.result = "JUMP START!!";
+        clearInterval(this.timerId);
         return;
       } else if (this.state == IDLE) {
         this.state = RUNNING;
         this.start();
       } else if (this.state == WAITING) {
         this.state = IDLE;
-        this.result = `${Date.now() - this.startTime} ms`;
+        this.result = this.format(Date.now() - this.startTime);
+        localStorage.best = Math.min(
+          this.best == 0 ? 10 : this.best,
+          this.result
+        );
       } else {
         this.state = IDLE;
         this.result = "JUMP START!";
       }
+    },
+
+    format(ms) {
+      const secs = (ms / 1000).toFixed(3);
+      return `${(parseInt(secs) < 10 ? "0" : "") + secs}`;
     },
   },
 };
@@ -86,16 +113,32 @@ export default {
 #app {
   height: 100%;
   width: 100%;
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
 }
 
 #container {
+  position: relative;
   display: flex;
   flex-direction: row;
 }
 
 #connector {
-  height: 20px;
-  width: 20px;
-  background-color: black;
+  position: absolute;
+  background: black;
+  height: 3%;
+  top: 50%;
+  width: 80%;
+  left: 10%;
+  z-index: -1;
+}
+
+@media only screen and (max-width: 600px) {
+  .info {
+    padding: 10px;
+    text-align: center;
+  }
 }
 </style>
