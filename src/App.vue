@@ -2,26 +2,27 @@
   <div id="app" v-on:click="this.onClick">
     <div class="help">
       <p>
-        <em
-          >Click or tap anywhere on the screen to start. Click again when lights
-          go off.</em
-        >
+        <em>
+          Click or tap anywhere on the screen to start. Click again when lights
+          go off.
+        </em>
       </p>
     </div>
-    <div id="container" ref="app">
+
+    <div id="lights-container">
       <div id="connector"></div>
-      <Light ref="lights" v-for="id in [0, 1, 2, 3, 4]" :key="id" />
+      <LightStrip ref="lights" v-for="id in [0, 1, 2, 3, 4]" :key="id" />
     </div>
-    <h1 class="time">
-      {{ this.result !== null ? this.result : "" }}
-    </h1>
+
+    <h1 class="time">{{ this.result !== null ? this.result : "" }}</h1>
     <div>Your best: {{ this.format(this.best) }}</div>
   </div>
 </template>
 
 <script>
-import Light from "./components/Light.vue";
+import LightStrip from "./components/LightStrip.vue";
 
+// Possible states
 const IDLE = "idle";
 const RUNNING = "running";
 const WAITING = "waiting";
@@ -29,12 +30,12 @@ const WAITING = "waiting";
 const SWITCH_INTERVAL = 1000; // ms
 
 export default {
-  components: { Light },
+  components: { LightStrip },
 
   data() {
     return {
       state: IDLE,
-      nextLight: 0,
+      nextLightStrip: 0,
       result: "00.000",
       startTime: null,
       timerId: null,
@@ -44,11 +45,7 @@ export default {
 
   methods: {
     start() {
-      if (this.state !== RUNNING) {
-        return;
-      }
-
-      this.nextLight = 0;
+      this.nextLightStrip = 0;
       this.result = "00.000";
       this.startTime = null;
       this.clearLights();
@@ -59,14 +56,14 @@ export default {
 
     turnOnNextLight() {
       // TODO introduce variable time for lights off
-      if (this.nextLight == 5) {
+      if (this.nextLightStrip == 5) {
         this.clearLights();
         this.startTime = Date.now();
         this.state = WAITING;
         clearInterval(this.timerId);
       } else {
-        this.$refs.lights[this.nextLight].switchOn(true);
-        this.nextLight++;
+        this.$refs.lights[this.nextLightStrip].switchOn(true);
+        this.nextLightStrip++;
       }
     },
 
@@ -79,7 +76,6 @@ export default {
         this.state = IDLE;
         this.result = "JUMP START!";
         clearInterval(this.timerId);
-        return;
       } else if (this.state == IDLE) {
         this.state = RUNNING;
         this.start();
@@ -87,13 +83,13 @@ export default {
         this.state = IDLE;
         const timeDiff = Date.now() - this.startTime;
         this.result = this.format(timeDiff);
-        this.best = Math.min(this.best === 0 ? 1000000 : this.best, timeDiff);
+        this.best = this.best === 0 ? timeDiff : Math.min(this.best, timeDiff);
         localStorage.best = this.best;
       }
     },
 
     format(ms) {
-      console.log(ms);
+      // Convert milliseconds to seconds.milliseconds format
       const secs = (ms / 1000).toFixed(3);
       return `${(parseInt(secs) < 10 ? "0" : "") + secs}`;
     },
@@ -111,7 +107,7 @@ export default {
   align-items: center;
 }
 
-#container {
+#lights-container {
   position: relative;
   display: flex;
   flex-direction: row;

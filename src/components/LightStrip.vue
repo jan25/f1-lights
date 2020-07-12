@@ -4,7 +4,7 @@
       v-for="light in lights"
       :key="light.id"
       class="light"
-      v-bind:class="{ on: light.on, off: !light.on }"
+      :class="{ on: light.on, off: !light.on }"
     ></div>
   </div>
 </template>
@@ -49,7 +49,7 @@ export default {
   }
 
   .light.on {
-    background-color: #ff1801;
+    background: #ff1801;
   }
 }
 
@@ -58,20 +58,20 @@ export default {
     width: 60px;
     padding: 0 5px;
     border-radius: 8px;
-    background-color: black;
+    background: black;
     margin: 0 3px;
   }
 
   .light {
     padding-top: 100%;
     border-radius: 50%;
-    background-color: #8080805c;
+    background: #8080805c;
     margin-bottom: 5px;
     margin-top: 5px;
   }
 
   .light.on {
-    background-color: #ff1801;
+    background: #ff1801;
   }
 }
 </style>

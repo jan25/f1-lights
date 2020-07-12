@@ -1,3 +1,4 @@
 module.exports = {
-  publicPath: "/f1-lights/",
+  // See https://cli.vuejs.org/guide/deployment.html#github-pages
+  publicPath: process.env.NODE_ENV === "production" ? "/f1-lights/" : "/",
 };
